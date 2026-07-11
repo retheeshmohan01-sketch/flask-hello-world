@@ -31,17 +31,18 @@ def get_gemini_response(user_message):
         print(f"Gemini Error: {e}")
         return "ക്ഷമിക്കണം, എനിക്ക് ഇപ്പോൾ മറുപടി നൽകാൻ സാധിക്കുന്നില്ല. ദയവായി അല്പം കഴിഞ്ഞ് ശ്രമിക്കൂ."
 
-# --- മെയിൻ റൂട്ടിലും വെബ്ഹൂക്ക് സ്വീകരിക്കാൻ മാറ്റം വരുത്തി ---
-@app.route('/', methods=['GET'])
+# ഫേസ്ബുക്ക് വെബ്ഹൂക്ക് ലിങ്ക് കൃത്യമായി സ്വീകരിക്കാൻ ഇവിടെ മാറ്റം വരുത്തി
 @app.route('/webhook', methods=['GET'])
 def verify_webhook():
-    return request.args.get("hub.challenge", "Bot is Running Live!")
+    challenge = request.args.get("hub.challenge")
+    if challenge:
+        return challenge, 200
+    return "Bot is Running Live!", 200
 
-@app.route('/', methods=['POST'])
 @app.route('/webhook', methods=['POST'])
 def fb_webhook():
     data = request.get_json()
-    if data.get('object') == 'page':
+    if data and data.get('object') == 'page':
         for entry in data.get('entry', []):
             for messaging_event in entry.get('messaging', []):
                 if messaging_event.get('message'):
@@ -51,7 +52,6 @@ def fb_webhook():
                     if message_text:
                         ai_reply = get_gemini_response(message_text)
                         send_message(sender_id, ai_reply)
-
     return "Message Processed", 200
 
 def send_message(recipient_id, message_text):
