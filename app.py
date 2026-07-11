@@ -1,42 +1,72 @@
-from flask import Flask, request
+import os
 import requests
+from flask import Flask, request
 
 app = Flask(__name__)
 
-PAGE_ACCESS_TOKEN = 'EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD'
+# --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD"
 
-def send_message(sender_id, text):
-    url = f"https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
-    payload = {
-        "recipient": {"id": sender_id},
-        "message": {"text": text}
-    }
-    requests.post(url, json=payload)
+# --- വലിയക്ഷരമായാലും ചെറിയക്ഷരമായാലും ബോട്ട് സ്വീകരിക്കും ---
+def check_verify_token(token):
+    return token in ["KVMP2516", "kvmp2516"]
 
-@app.route('/', methods=['GET', 'POST'])
+# --- നിന്റെ GEMINI API KEY ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+GEMINI_API_KEY = "AQ.Ab8RN6Jm_ctU5lXNs0yxNYQMjaWXDHcydZpGmQZ_ZigJaPvRsA" 
+
+def get_gemini_response(user_message):
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        headers = {'Content-Type': 'application/json'}
+        
+        system_instruction = "നീ Malayali360 പേജിന്റെ ഒരു AI അസിസ്റ്റന്റ് ആണ്. ആളുകൾ ചോദിക്കുന്ന ചോദ്യങ്ങൾക്ക് വളരെ ലളിതമായും സൗഹൃദപരമായും മലയാളത്തിൽ മാത്രം മറുപടി നൽകുക."
+        
+        payload = {
+            "contents": [{"parts": [{"text": user_message}]}],
+            "systemInstruction": {"parts": [{"text": system_instruction}]}
+        }
+        
+        response = requests.post(url, headers=headers, json=payload)
+        response_data = response.json()
+        
+        bot_reply = response_data['candidates'][0]['content']['parts'][0]['text']
+        return bot_reply
+    except Exception as e:
+        print(f"Gemini Error: {e}")
+        return "ക്ഷമിക്കണം, എനിക്ക് ഇപ്പോൾ മറുപടി നൽകാൻ സാധിക്കുന്നില്ല. ദയവായി അല്പം കഴിഞ്ഞ് ശ്രമിക്കൂ."
+
+@app.route('/webhook', methods=['GET'])
+def verify_webhook():
+    token_sent = request.args.get("hub.verify_token")
+    if check_verify_token(token_sent):
+        return request.args.get("hub.challenge")
+    return 'Invalid verification token', 403
+
+@app.route('/webhook', methods=['POST'])
 def fb_webhook():
-    if request.method == 'GET':
-        mode = request.args.get('hub.mode')
-        token = request.args.get('hub.verify_token')
-        challenge = request.args.get('hub.challenge')
-        
-        if mode == 'subscribe' and token == 'kvmpbot2516':
-            return challenge, 200
-        return 'Invalid verification token', 403
-        
-    elif request.method == 'POST':
-        data = request.get_json()
-        if data.get('object') == 'page':
-            for entry in data.get('entry', []):
-                for messaging_event in entry.get('messaging', []):
-                    if messaging_event.get('message'):
-                        sender_id = messaging_event['sender']['id']
-                        message_text = messaging_event['message'].get('text', '')
-                        
-                        # ബോട്ട് തിരിച്ച് അയക്കുന്ന മറുപടി ഇവിടെ സെറ്റ് ചെയ്യുന്നു
-                        if message_text:
-                            send_message(sender_id, "വാർത്തകൾ | വിശേഷങ്ങൾ | വൈറൽ | അറിവുകൾ | വിനോദം.  അറിയുവാൻ വേണ്ടി Malayali360 പേജിലേക്ക് സ്വാഗതം")
-                            
-        return 'EVENT_RECEIVED', 200
+    data = request.get_json()
+    if data.get('object') == 'page':
+        for entry in data.get('entry', []):
+            for messaging_event in entry.get('messaging', []):
+                if messaging_event.get('message'):
+                    sender_id = messaging_event['sender']['id']
+                    message_text = messaging_event['message'].get('text', '')
 
-    return 'Bot Running', 200
+                    if message_text:
+                        ai_reply = get_gemini_response(message_text)
+                        send_message(sender_id, ai_reply)
+
+    return "Message Processed", 200
+
+def send_message(recipient_id, message_text):
+    params = {"access_token": PAGE_ACCESS_TOKEN}
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "recipient": {"id": recipient_id},
+        "message": {"text": message_text}
+    }
+    response = requests.post("https://graph.facebook.com/v12.0/me/messages", params=params, headers=headers, json=data)
+    return response.json()
+
+if __name__ == '__main__':
+    app.run(debug=True)
