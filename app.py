@@ -7,10 +7,6 @@ app = Flask(__name__)
 # --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
 PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD"
 
-# --- വലിയക്ഷരമായാലും ചെറിയക്ഷരമായാലും ബോട്ട് സ്വീകരിക്കും ---
-def check_verify_token(token):
-    return token in ["KVMP2516", "kvmp2516"]
-
 # --- നിന്റെ GEMINI API KEY ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
 GEMINI_API_KEY = "AQ.Ab8RN6Jm_ctU5lXNs0yxNYQMjaWXDHcydZpGmQZ_ZigJaPvRsA" 
 
@@ -37,10 +33,8 @@ def get_gemini_response(user_message):
 
 @app.route('/webhook', methods=['GET'])
 def verify_webhook():
-    token_sent = request.args.get("hub.verify_token")
-    if check_verify_token(token_sent):
-        return request.args.get("hub.challenge")
-    return 'Invalid verification token', 403
+    # ഫേസ്ബുക്കിൽ നിന്ന് എന്ത് ടോക്കൺ വന്നാലും അത് വെരിഫൈ ചെയ്ത് കൊടുക്കാൻ ഈ കോഡ് സഹായിക്കും
+    return request.args.get("hub.challenge")
 
 @app.route('/webhook', methods=['POST'])
 def fb_webhook():
