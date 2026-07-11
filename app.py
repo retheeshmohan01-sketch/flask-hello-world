@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-# നീ ഇപ്പോൾ കോപ്പി ചെയ്ത വലിയ ടോക്കൺ (EAADL...) ഈ താഴെ കാണുന്ന സിംഗിൾ കോഡ്സിന്റെ '' ഉള്ളിൽ പേസ്റ്റ് ചെയ്യുക
+# നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ
 PAGE_ACCESS_TOKEN = 'EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD'
 
 @app.route('/', methods=['GET', 'POST'])
@@ -17,7 +17,6 @@ def fb_webhook():
             return challenge, 200
         return 'Invalid verification token', 403
         
-    # ഫേസ്ബുക്കിൽ നിന്ന് മെസ്സേജ് വരുമ്പോൾ അത് ഹാൻഡിൽ ചെയ്യാനുള്ള കോഡ്
     elif request.method == 'POST':
         data = request.get_json()
         if data.get('object') == 'page':
@@ -25,7 +24,6 @@ def fb_webhook():
                 for messaging_event in entry.get('messaging', []):
                     if messaging_event.get('message'):
                         sender_id = messaging_event['sender']['id']
-                        # ഇവിടെയാണ് ബോട്ട് തിരിച്ച് റിപ്ലൈ അയക്കേണ്ടത് (അതിനുള്ള കോഡ് പിന്നീട് ചേർക്കാം)
         return 'EVENT_RECEIVED', 200
 
     return 'Bot Running', 200
