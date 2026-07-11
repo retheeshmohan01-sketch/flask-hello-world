@@ -3,8 +3,15 @@ import requests
 
 app = Flask(__name__)
 
-# നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ
 PAGE_ACCESS_TOKEN = 'EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD'
+
+def send_message(sender_id, text):
+    url = f"https://graph.facebook.com/v21.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    payload = {
+        "recipient": {"id": sender_id},
+        "message": {"text": text}
+    }
+    requests.post(url, json=payload)
 
 @app.route('/', methods=['GET', 'POST'])
 def fb_webhook():
@@ -24,6 +31,12 @@ def fb_webhook():
                 for messaging_event in entry.get('messaging', []):
                     if messaging_event.get('message'):
                         sender_id = messaging_event['sender']['id']
+                        message_text = messaging_event['message'].get('text', '')
+                        
+                        # ബോട്ട് തിരിച്ച് അയക്കുന്ന മറുപടി ഇവിടെ സെറ്റ് ചെയ്യുന്നു
+                        if message_text:
+                            send_message(sender_id, "KVMP സൗഹൃദ കൂട്ടായ്മയിലേക്ക് സ്വാഗതം! ഞങ്ങളുടെ ബോട്ട് വിജയകരമായി പ്രവർത്തിക്കുന്നുണ്ട്.")
+                            
         return 'EVENT_RECEIVED', 200
 
     return 'Bot Running', 200
