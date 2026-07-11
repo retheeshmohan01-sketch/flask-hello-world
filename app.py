@@ -4,10 +4,10 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+# --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ---
 PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD"
 
-# --- നിന്റെ GEMINI API KEY ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+# --- നിന്റെ GEMINI API KEY ---
 GEMINI_API_KEY = "AQ.Ab8RN6Jm_ctU5lXNs0yxNYQMjaWXDHcydZpGmQZ_ZigJaPvRsA" 
 
 def get_gemini_response(user_message):
@@ -31,11 +31,13 @@ def get_gemini_response(user_message):
         print(f"Gemini Error: {e}")
         return "ക്ഷമിക്കണം, എനിക്ക് ഇപ്പോൾ മറുപടി നൽകാൻ സാധിക്കുന്നില്ല. ദയവായി അല്പം കഴിഞ്ഞ് ശ്രമിക്കൂ."
 
+# --- മെയിൻ റൂട്ടിലും വെബ്ഹൂക്ക് സ്വീകരിക്കാൻ മാറ്റം വരുത്തി ---
+@app.route('/', methods=['GET'])
 @app.route('/webhook', methods=['GET'])
 def verify_webhook():
-    # ഫേസ്ബുക്കിൽ നിന്ന് എന്ത് ടോക്കൺ വന്നാലും അത് വെരിഫൈ ചെയ്ത് കൊടുക്കാൻ ഈ കോഡ് സഹായിക്കും
-    return request.args.get("hub.challenge")
+    return request.args.get("hub.challenge", "Bot is Running Live!")
 
+@app.route('/', methods=['POST'])
 @app.route('/webhook', methods=['POST'])
 def fb_webhook():
     data = request.get_json()
