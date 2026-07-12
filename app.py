@@ -7,8 +7,8 @@ app = Flask(__name__)
 # --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ---
 PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD"
 
-# --- നിന്റെ GEMINI API KEY ---
-GEMINI_API_KEY = "AQ.Ab8RN6Jm_ctU5lXNs0yxNYQMjaWXDHcydZpGmQZ_ZigJaPvRsA" 
+# --- നീ ഇപ്പോൾ തന്ന പുതിയ GEMINI API KEY ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+GEMINI_API_KEY = "AQ.Ab8RN6Kl-dkDKguTTmwrvK5bvRF2a99Eh5rUPi_rlfCbaOWHNQ" 
 
 def get_gemini_response(user_message):
     try:
@@ -31,7 +31,7 @@ def get_gemini_response(user_message):
         print(f"Gemini Error: {e}")
         return "ക്ഷമിക്കണം, എനിക്ക് ഇപ്പോൾ മറുപടി നൽകാൻ സാധിക്കുന്നില്ല. ദയവായി അല്പം കഴിഞ്ഞ് ശ്രമിക്കൂ."
 
-# ഫേസ്ബുക്ക് വെബ്ഹൂക്ക് ലിങ്ക് കൃത്യമായി സ്വീകരിക്കാൻ ഇവിടെ മാറ്റം വരുത്തി
+# ഫേസ്ബുക്ക് വെബ്ഹൂക്ക് കണക്ഷൻ സ്വീകരിക്കാനുള്ള റൂട്ടുകൾ
 @app.route('/webhook', methods=['GET'])
 def verify_webhook():
     challenge = request.args.get("hub.challenge")
