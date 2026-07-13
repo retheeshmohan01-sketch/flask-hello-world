@@ -4,10 +4,10 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# --- നിന്റെ ഫേസ്ബുക്ക് ടോക്കൺ ---
-PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBR5PyWho3knsJ52knqZBO99IcYGVa7OT92IvfrESBP2jvLqVs46tnfyE33KSl4keLZCZALeD1AZAiW3w82soqtMLNki5gVMHGV2Qu01eHERFvH8xGoWa9gCoQkO3n3h4icnXd4jiZAnjQ4rWZCbYUjJmyvKFAZBYfiJH46YhEVRV699S8y7m3f9p4qcMn1JxGq2KcAFq8E4v4vyWiAZDZD"
+# --- നീ ഇപ്പോൾ തന്ന പുതിയ ഫേസ്ബുക്ക് ടോക്കൺ ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+PAGE_ACCESS_TOKEN = "EAAdLi3MAHMYBRyBAfliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5iru5vHotrEXIZA8O25WADxsfPA7C0Q185XK1cy3ZA89vrYoh3snXfdKQgBzlVZBUCGafA1ccZC8cEBiREZAx5FZA1YdnQ0BTjooZA0Pxw3EzfpQ7s63bcoJhlZCmsSMIsVmbZCviaE9YYpclyZCsUcqwbjZBAL27HcSHflu6gZDZD"
 
-# --- നീ ഇപ്പോൾ തന്ന പുതിയ GEMINI API KEY ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
+# --- നീ നേരത്തെ തന്ന Gemini API Key ഞാൻ ഇവിടെ ചേർത്തിട്ടുണ്ട് ---
 GEMINI_API_KEY = "AQ.Ab8RN6Kl-dkDKguTTmwrvK5bvRF2a99Eh5rUPi_rlfCbaOWHNQ" 
 
 def get_gemini_response(user_message):
