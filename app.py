@@ -1,22 +1,25 @@
 import os
 import requests
 from flask import Flask, request
-import google.generativeai as genai
 
 app = Flask(__name__)
 
+# നിന്റെ പുതിയ വിവരങ്ങൾ ഇവിടെ ചേർത്തിട്ടുണ്ട്
 FACEBOOK_ACCESS_TOKEN = "EAAdLi3MAHMYByBAFliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5in"
 VERIFY_TOKEN = "kvmpbot2516"
-GEMINI_API_KEY = "AQ.Ab8RN6Kl-dkDKguTTmwrvK5bvRF2a99Eh5rUPi_rlfcbaOwHNQ"
-
-genai.configure(api_key=GEMINI_API_KEY)
+GEMINI_API_KEY = "AQ.Ab8RN6JapTR6-VVbzerRJEJb6tf6PRHg1cPYGgLvzuSY3RPXdA"
 
 def get_gemini_response(user_message):
     try:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(user_message)
-        if response and response.text:
+        
+        if hasattr(response, 'text') and response.text:
             return response.text
+        elif hasattr(response, 'candidates') and response.candidates:
+            return response.candidates[0].content.parts[0].text
         return "ക്ഷമിക്കണം, എനിക്ക് ഇപ്പോൾ മറുപടി നൽകാൻ സാധിക്കുന്നില്ല."
     except Exception as e:
         print(f"Gemini Error: {e}")
