@@ -4,7 +4,7 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# Render Environment Variables-ൽ നിന്ന് കീകൾ തനിയെ എടുത്തോളും
+# Render-ൽ നമ്മൾ കൊടുത്ത കീകൾ ഇവിടെ കൃത്യമായി റീഡ് ചെയ്യും
 FACEBOOK_ACCESS_TOKEN = os.environ.get("FACEBOOK_ACCESS_TOKEN", "EAAdLi3MAHMYByBAFliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5in")
 VERIFY_TOKEN = "kvmpbot2516"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -74,4 +74,4 @@ def home():
     return "Bot Server is Running!", 200
 
 if __name__ == "__main__":
-    app.run(host="0.
+    app.run(host="0.0.0.0", port=5000)
