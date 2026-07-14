@@ -4,7 +4,6 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-# Render-ൽ നമ്മൾ കൊടുത്ത കീകൾ ഇവിടെ കൃത്യമായി റീഡ് ചെയ്യും
 FACEBOOK_ACCESS_TOKEN = os.environ.get("FACEBOOK_ACCESS_TOKEN", "EAAdLi3MAHMYByBAFliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5in")
 VERIFY_TOKEN = "kvmpbot2516"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -14,13 +13,17 @@ def get_gemini_response(user_message):
         if not GEMINI_API_KEY:
             return "ക്ഷമിക്കണം, എപിഐ കീ ലഭ്യമാണല്ല."
             
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        # ഒഫീഷ്യൽ ഗൂഗിൾ ക്ലൗഡ് API ഗേറ്റ്‌വേ എൻഡ്പോയിന്റ്
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
         payload = {
             "contents": [{
                 "parts": [{"text": user_message}]
             }]
         }
-        headers = {"Content-Type": "application/json"}
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {GEMINI_API_KEY}" # ഇവിടെയാണ് ടോക്കൺ നൽകേണ്ടത്
+        }
         
         response = requests.post(url, json=payload, headers=headers)
         res_data = response.json()
