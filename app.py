@@ -4,13 +4,16 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-FACEBOOK_ACCESS_TOKEN = "EAAdLi3MAHMYByBAFliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5in"
+# Render Environment Variables-ൽ നിന്ന് കീകൾ തനിയെ എടുത്തോളും
+FACEBOOK_ACCESS_TOKEN = os.environ.get("FACEBOOK_ACCESS_TOKEN", "EAAdLi3MAHMYByBAFliNnKD93fdU6gRaGhfGnHmeqZAj4wHSce8LYlVz5in")
 VERIFY_TOKEN = "kvmpbot2516"
-GEMINI_API_KEY = "AQ.Ab8RN6lkz8pUcfgwwlfNAT7L19v4eQeVvVfSgWCaHL1mWa1euw"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 def get_gemini_response(user_message):
     try:
-        # പുതിയ ഗൂഗിൾ എപിഐ എൻഡ്പോയിന്റ് നേരിട്ട് ഉപയോഗിക്കുന്നു
+        if not GEMINI_API_KEY:
+            return "ക്ഷമിക്കണം, എപിഐ കീ ലഭ്യമാണല്ല."
+            
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         payload = {
             "contents": [{
@@ -71,4 +74,4 @@ def home():
     return "Bot Server is Running!", 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.
